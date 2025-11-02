@@ -21,9 +21,9 @@ fatal: Authentication failed
 
 3. **Cole o token** que você copiou:
    ```
-   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
+   ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    ```
-   (Use o seu token, não esse exemplo)
+   (Use o seu token pessoal, não use este exemplo)
 
 4. **Pronto!** Agora execute:
    ```
@@ -37,16 +37,16 @@ fatal: Authentication failed
 #### Método A: Token na URL (Mais Simples)
 
 1. **Pegue seu token:**
-   - Token que você copiou: `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`
+   - Token que você copiou do GitHub (formato: `ghp_XXXXXXXXXX...`)
 
 2. **Configure o remote com token:**
    ```bash
    git remote set-url origin https://SEU_TOKEN@github.com/JeACloset/JeACloset.git
    ```
    
-   **Exemplo:**
+   **Exemplo (SUBSTITUA pelo seu token):**
    ```bash
-   git remote set-url origin https://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@github.com/JeACloset/JeACloset.git
+   git remote set-url origin https://ghp_SEU_TOKEN_AQUI@github.com/JeACloset/JeACloset.git
    ```
    
    ⚠️ **Substitua `SEU_TOKEN` pelo token que você copiou!**
@@ -76,8 +76,9 @@ fatal: Authentication failed
    - **Username:** `JeACloset` (seu usuário do GitHub)
    - **Password:** Cole o **TOKEN** (NÃO sua senha do GitHub!)
      ```
-     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
+     ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
      ```
+     (Cole seu token pessoal aqui)
 
 4. **O Windows salvará as credenciais** para próximas vezes
 
@@ -97,15 +98,14 @@ fatal: Authentication failed
 ## 📝 Passo a Passo Completo (Token na URL)
 
 ### 1. Pegue seu token
-Do GitHub, você já tem:
-```
-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
-```
+Do GitHub, acesse: https://github.com/settings/tokens
+Copie o token que você gerou (formato: `ghp_XXXXXXXXXX...`)
 
 ### 2. Configure o remote
 ```bash
-git remote set-url origin https://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@github.com/JeACloset/JeACloset.git
+git remote set-url origin https://SEU_TOKEN_AQUI@github.com/JeACloset/JeACloset.git
 ```
+⚠️ **Substitua `SEU_TOKEN_AQUI` pelo token real que você copiou!**
 ⚠️ **Substitua pelo SEU token!**
 
 ### 3. Teste

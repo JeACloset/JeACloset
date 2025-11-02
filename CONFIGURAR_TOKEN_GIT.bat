@@ -44,7 +44,7 @@ if "!OPCAO!"=="1" (
     echo OPCAO 1: Inserir token na URL
     echo.
     echo Cole o Personal Access Token que voce copiou do GitHub:
-    echo (Exemplo: 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)
+    echo (Formato: ghp_XXXXXXXXXX...)
     echo.
     set "TOKEN="
     set /p "TOKEN=Token: "

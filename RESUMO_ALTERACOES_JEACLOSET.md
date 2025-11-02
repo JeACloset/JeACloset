@@ -27,8 +27,10 @@ Sistema completo de backup automático que:
 5. ✅ Configurou URLs autorizadas
 
 **Credenciais obtidas:**
-- Client ID: `366840202972-8bqjiiavdjaisn7oqmpkl0csi93eqjp3.apps.googleusercontent.com`
-- Client Secret: `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`
+- Client ID: `[CONFIGURAR_NO_GOOGLE_CLOUD_CONSOLE]`
+- Client Secret: `[CONFIGURAR_NO_GOOGLE_CLOUD_CONSOLE]`
+
+⚠️ **IMPORTANTE:** Configure suas credenciais em `src/config/driveConfig.ts` (veja `driveConfig.example.ts`)
 
 ---
 
