@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Coleção USERS - permitir tudo (login e gerenciamento)
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+    
+    // Coleção CLOTHING - permitir tudo
+    match /clothing/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Coleção SALES - permitir tudo
+    match /sales/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Coleção FLUXO - permitir tudo
+    match /fluxo/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Coleção NOTES - permitir tudo
+    match /notes/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Coleção INVESTMENTS - permitir tudo
+    match /investments/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Bloquear tudo que não foi explicitamente permitido
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

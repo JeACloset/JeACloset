@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Lucro - JEACLOSET</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; max-height: 400px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .negative { color: red; font-weight: bold; }
+        .positive { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Lucro Esperado - JEACLOSET</h1>
+        
+        <div class="section info">
+            <h3>📋 Instruções:</h3>
+            <ol>
+                <li>Abra o console do navegador (F12)</li>
+                <li>Clique em "Verificar Dados"</li>
+                <li>Verifique os cálculos detalhados</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h3>🔧 Ações:</h3>
+            <button onclick="verificarDados()">Verificar Dados Firebase</button>
+            <button onclick="calcularLucro()">Calcular Lucro Detalhado</button>
+            <button onclick="verificarDadosDemo()">Verificar Dados Demo</button>
+        </div>
+
+        <div id="resultado" class="section" style="display: none;">
+            <h3>📊 Resultado:</h3>
+            <pre id="resultadoTexto"></pre>
+        </div>
+
+        <div id="tabela" class="section" style="display: none;">
+            <h3>📋 Tabela de Cálculos:</h3>
+            <div id="tabelaConteudo"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Configuração do Firebase (mesma do JEACLOSET)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkY4FPYiUhpgGYkcYzJJ1uUyQv0yEe9Vo",
+            authDomain: "JEACLOSET.firebaseapp.com",
+            projectId: "JEACLOSET",
+            storageBucket: "JEACLOSET.firebasestorage.app",
+            messagingSenderId: "948098617374",
+            appId: "1:948098617374:web:261afe17a0f19cc660de0f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.verificarDados = async function() {
+            const resultado = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            
+            try {
+                resultado.style.display = 'block';
+                resultado.className = 'section info';
+                resultadoTexto.textContent = 'Verificando dados...';
+
+                const colecoes = ['clothing', 'sales'];
+                const dados = {};
+
+                for (const colecao of colecoes) {
+                    try {
+                        const querySnapshot = await getDocs(collection(db, colecao));
+                        dados[colecao] = [];
+                        querySnapshot.forEach((doc) => {
+                            dados[colecao].push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        });
+                    } catch (error) {
+                        dados[colecao] = `Erro: ${error.message}`;
+                    }
+                }
+
+                resultadoTexto.textContent = JSON.stringify(dados, null, 2);
+                resultado.className = 'section success';
+                
+                console.log('📊 Dados encontrados:', dados);
+            } catch (error) {
+                resultadoTexto.textContent = `Erro: ${error.message}`;
+                resultado.className = 'section error';
+                console.error('❌ Erro:', error);
+            }
+        };
+
+        window.calcularLucro = async function() {
+            const resultado = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            const tabela = document.getElementById('tabela');
+            const tabelaConteudo = document.getElementById('tabelaConteudo');
+            
+            try {
+                resultado.style.display = 'block';
+                tabela.style.display = 'block';
+                resultado.className = 'section info';
+                resultadoTexto.textContent = 'Calculando lucro...';
+
+                // Buscar dados de clothing
+                const clothingSnapshot = await getDocs(collection(db, 'clothing'));
+                const clothingItems = [];
+                clothingSnapshot.forEach((doc) => {
+                    clothingItems.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                console.log('👕 Itens de roupa encontrados:', clothingItems.length);
+
+                let totalLucro = 0;
+                let tabelaHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Preço Venda</th>
+                                <th>Custo Base</th>
+                                <th>Frete</th>
+                                <th>Extras</th>
+                                <th>Embalagem</th>
+                                <th>Taxa Cartão</th>
+                                <th>Custo Total</th>
+                                <th>Lucro/Peça</th>
+                                <th>Qtd Total</th>
+                                <th>Lucro Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                clothingItems.forEach((item, index) => {
+                    // Calcular quantidade total de peças
+                    let totalPieces = 0;
+                    if (item.variations && Array.isArray(item.variations)) {
+                        item.variations.forEach(variation => {
+                            totalPieces += (variation.quantity || 0) + (variation.soldQuantity || 0);
+                        });
+                    }
+                    
+                    // Calcular frete unitário (frete total dividido pela quantidade total de peças)
+                    const freightPerUnit = totalPieces > 0 ? (item.freightCost || 0) / totalPieces : 0;
+                    
+                    // Calcular custos
+                    const costPrice = item.costPrice || 0;
+                    const extraCosts = item.extraCosts || 0;
+                    const packagingCost = item.packagingCost || 0;
+                    const creditFeeAmount = item.creditFeeAmount || 0;
+                    
+                    const totalCost = costPrice + freightPerUnit + extraCosts + packagingCost + (item.creditFee || 0);
+                    const sellingPrice = item.sellingPrice || 0;
+                    const profitPerPiece = sellingPrice - totalCost;
+                    
+                    const totalProfit = profitPerPiece * totalPieces;
+                    totalLucro += totalProfit;
+                    
+                    const lucroClass = profitPerPiece < 0 ? 'negative' : 'positive';
+                    const totalLucroClass = totalProfit < 0 ? 'negative' : 'positive';
+                    
+                    tabelaHTML += `
+                        <tr>
+                            <td>${item.name || 'N/A'}</td>
+                            <td>R$ ${sellingPrice.toFixed(2)}</td>
+                            <td>R$ ${costPrice.toFixed(2)}</td>
+                            <td>R$ ${freightPerUnit.toFixed(2)}</td>
+                            <td>R$ ${extraCosts.toFixed(2)}</td>
+                            <td>R$ ${packagingCost.toFixed(2)}</td>
+                            <td>R$ ${(item.creditFee || 0).toFixed(2)}</td>
+                            <td>R$ ${totalCost.toFixed(2)}</td>
+                            <td class="${lucroClass}">R$ ${profitPerPiece.toFixed(2)}</td>
+                            <td>${totalPieces}</td>
+                            <td class="${totalLucroClass}">R$ ${totalProfit.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                tabelaHTML += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background-color: #f2f2f2;">
+                                <td colspan="10">TOTAL GERAL</td>
+                                <td class="${totalLucro < 0 ? 'negative' : 'positive'}">R$ ${totalLucro.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+
+                tabelaConteudo.innerHTML = tabelaHTML;
+                
+                resultadoTexto.textContent = `Lucro Total Calculado: R$ ${totalLucro.toFixed(2)}`;
+                resultado.className = totalLucro < 0 ? 'section error' : 'section success';
+                
+                console.log('💰 Lucro total calculado:', totalLucro);
+                console.log('📊 Detalhes dos itens:', clothingItems);
+            } catch (error) {
+                resultadoTexto.textContent = `Erro: ${error.message}`;
+                resultado.className = 'section error';
+                console.error('❌ Erro:', error);
+            }
+        };
+
+        window.verificarDadosDemo = function() {
+            const resultado = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            
+            // Simular dados demo para teste
+            const demoItems = [
+                {
+                    name: 'Blusa Básica',
+                    costPrice: 28.00,
+                    freightCost: 2.80,
+                    extraCosts: 0,
+                    packagingCost: 1.20,
+                    creditFeeAmount: 1.12,
+                    sellingPrice: 59.90,
+                    variations: [
+                        { quantity: 1, soldQuantity: 2 },
+                        { quantity: 1, soldQuantity: 2 },
+                        { quantity: 1, soldQuantity: 2 }
+                    ]
+                }
+            ];
+
+            let totalLucro = 0;
+            demoItems.forEach(item => {
+                const totalCost = item.costPrice + item.freightCost + item.extraCosts + item.packagingCost + item.creditFeeAmount;
+                const profitPerPiece = item.sellingPrice - totalCost;
+                const totalPieces = item.variations.reduce((sum, v) => sum + v.quantity + v.soldQuantity, 0);
+                const totalProfit = profitPerPiece * totalPieces;
+                totalLucro += totalProfit;
+                
+                console.log(`Item: ${item.name}`);
+                console.log(`Custo total: R$ ${totalCost.toFixed(2)}`);
+                console.log(`Preço venda: R$ ${item.sellingPrice.toFixed(2)}`);
+                console.log(`Lucro por peça: R$ ${profitPerPiece.toFixed(2)}`);
+                console.log(`Quantidade total: ${totalPieces}`);
+                console.log(`Lucro total: R$ ${totalProfit.toFixed(2)}`);
+            });
+
+            resultado.style.display = 'block';
+            resultado.className = totalLucro < 0 ? 'section error' : 'section success';
+            resultadoTexto.textContent = `Dados Demo - Lucro Total: R$ ${totalLucro.toFixed(2)}`;
+            
+            console.log('🧪 Teste com dados demo - Lucro total:', totalLucro);
+        };
+    </script>
+</body>
+</html>

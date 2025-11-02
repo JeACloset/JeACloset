@@ -1,0 +1,9 @@
+
+    login: Admin
+    senha: carambola
+
+    login: test
+    senha: 123
+    
+    login: Usuário
+    senha: cloe

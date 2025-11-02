@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autorização Google Drive</title>
+</head>
+<body>
+  <script>
+    // Extrair token da URL após redirecionamento OAuth
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+    const expiresIn = params.get('expires_in');
+
+    if (accessToken) {
+      // Enviar token para a janela pai
+      window.opener.postMessage({
+        type: 'GOOGLE_DRIVE_TOKEN',
+        token: accessToken,
+        expiresIn: expiresIn ? parseInt(expiresIn) : 3600
+      }, window.location.origin);
+
+      document.body.innerHTML = '<h2 style="text-align: center; margin-top: 50px;">✅ Autorização realizada com sucesso!<br><small>Você pode fechar esta janela.</small></h2>';
+      
+      // Fechar automaticamente após 2 segundos
+      setTimeout(() => {
+        window.close();
+      }, 2000);
+    } else {
+      document.body.innerHTML = '<h2 style="text-align: center; margin-top: 50px; color: red;">❌ Erro na autorização<br><small>Por favor, feche esta janela e tente novamente.</small></h2>';
+    }
+  </script>
+</body>
+</html>
+

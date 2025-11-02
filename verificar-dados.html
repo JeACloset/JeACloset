@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Dados Firebase - JEACLOSET</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificador de Dados Firebase - JEACLOSET</h1>
+        
+        <div class="section info">
+            <h3>📋 Instruções:</h3>
+            <ol>
+                <li>Abra o console do navegador (F12)</li>
+                <li>Clique em "Verificar Dados"</li>
+                <li>Verifique os resultados no console</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h3>🔧 Ações:</h3>
+            <button onclick="verificarDados()">Verificar Dados Firebase</button>
+            <button onclick="limparDados()">Limpar Dados Locais</button>
+            <button onclick="exportarDados()">Exportar Dados Atuais</button>
+        </div>
+
+        <div id="resultado" class="section" style="display: none;">
+            <h3>📊 Resultado:</h3>
+            <pre id="resultadoTexto"></pre>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Configuração do Firebase (mesma do JEACLOSET)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvQZvQZvQZvQZvQZvQZvQZvQZvQZvQZvQ",
+            authDomain: "JEACLOSET-2025.firebaseapp.com",
+            projectId: "JEACLOSET-2025",
+            storageBucket: "JEACLOSET-2025.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.verificarDados = async function() {
+            const resultado = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            
+            try {
+                resultado.style.display = 'block';
+                resultado.className = 'section info';
+                resultadoTexto.textContent = 'Verificando dados...';
+
+                const colecoes = ['clothing', 'sales', 'fluxo', 'investments', 'notes'];
+                const dados = {};
+
+                for (const colecao of colecoes) {
+                    try {
+                        const querySnapshot = await getDocs(collection(db, colecao));
+                        dados[colecao] = [];
+                        querySnapshot.forEach((doc) => {
+                            dados[colecao].push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        });
+                    } catch (error) {
+                        dados[colecao] = `Erro: ${error.message}`;
+                    }
+                }
+
+                resultadoTexto.textContent = JSON.stringify(dados, null, 2);
+                resultado.className = 'section success';
+                
+                console.log('📊 Dados encontrados:', dados);
+            } catch (error) {
+                resultadoTexto.textContent = `Erro: ${error.message}`;
+                resultado.className = 'section error';
+                console.error('❌ Erro:', error);
+            }
+        };
+
+        window.limparDados = function() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('resultado').style.display = 'block';
+            document.getElementById('resultado').className = 'section success';
+            document.getElementById('resultadoTexto').textContent = '✅ Dados locais limpos!';
+        };
+
+        window.exportarDados = function() {
+            const dados = {
+                localStorage: { ...localStorage },
+                sessionStorage: { ...sessionStorage },
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `JEACLOSET-dados-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+    </script>
+</body>
+</html>
