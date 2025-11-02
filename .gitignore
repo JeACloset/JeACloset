@@ -24,4 +24,3 @@ dist-ssr
 *.sw?
 
 # Credenciais sensíveis - Manter driveConfig.ts local, não commitar se tiver secrets
-src/config/driveConfig.ts

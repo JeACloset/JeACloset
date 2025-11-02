@@ -3,6 +3,7 @@ setlocal enabledelayedexpansion
 REM ==========================================
 REM SCRIPT DE DEPLOY AUTOMATICO - GITHUB
 REM ==========================================
+REM Versao melhorada seguindo fluxo USEKAYLLA
 REM Clique duas vezes no arquivo para executar
 
 echo.
