@@ -51,8 +51,20 @@ git push
 
 if errorlevel 1 (
     echo.
-    echo ERRO: Falha ao fazer push
-    echo Verifique se o remote esta configurado e se tem permissao
+    echo ========================================
+    echo   ERRO: Falha ao fazer push
+    echo ========================================
+    echo.
+    echo Erro comum: "Password authentication is not supported"
+    echo.
+    echo SOLUCAO: Configure o Personal Access Token
+    echo.
+    echo 1. Execute: CONFIGURAR_TOKEN_GIT.bat
+    echo    E siga as instrucoes
+    echo.
+    echo 2. OU configure manualmente:
+    echo    - Token: https://github.com/settings/tokens
+    echo    - Ao pedir senha, use o TOKEN (nao sua senha do GitHub!)
     echo.
     echo Para verificar remote: git remote -v
     echo.

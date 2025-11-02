@@ -138,15 +138,20 @@ if /i "!PUSH!"=="S" (
     
     if errorlevel 1 (
         echo.
-        echo ERRO: Falha ao fazer push
+        echo ========================================
+        echo   ERRO: Falha ao fazer push
+        echo ========================================
         echo.
-        echo Possiveis causas:
-        echo   - Repositorio nao existe no GitHub (crie em https://github.com/new)
-        echo   - Sem permissao (configure Personal Access Token)
-        echo   - Credenciais nao configuradas
+        echo Erro comum: "Password authentication is not supported"
         echo.
-        echo Para criar repositorio: https://github.com/new
-        echo Para configurar token: https://github.com/settings/tokens
+        echo SOLUCAO: Configure o Personal Access Token
+        echo.
+        echo 1. Execute: CONFIGURAR_TOKEN_GIT.bat
+        echo    E siga as instrucoes para inserir o token
+        echo.
+        echo 2. Depois execute novamente: git push -u origin main
+        echo.
+        echo IMPORTANTE: Ao pedir senha, use o TOKEN (nao sua senha!)
         echo.
         pause
         exit /b 1
