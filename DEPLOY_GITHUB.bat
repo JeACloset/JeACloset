@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM ==========================================
 REM SCRIPT DE DEPLOY AUTOMATICO - GITHUB
 REM ==========================================
@@ -77,28 +78,57 @@ if errorlevel 1 (
     echo AVISO: Remote 'origin' nao configurado
     echo.
     set /p SETUP_REMOTE="Deseja configurar o remote agora? (S/N): "
-    if /i "%SETUP_REMOTE%"=="S" (
+    if /i "!SETUP_REMOTE!"=="S" (
         echo.
         echo Digite a URL do repositorio GitHub:
         echo (Exemplo: https://github.com/usuario/repositorio.git)
-        set /p NEW_REMOTE="URL: "
-        if not "%NEW_REMOTE%"=="" (
-            git remote add origin "%NEW_REMOTE%"
-            if errorlevel 1 (
-                echo.
-                echo ERRO: Falha ao configurar remote
-                echo.
-                pause
-                exit /b 1
-            )
-            echo OK Remote 'origin' configurado
-        ) else (
+        echo (Ou apenas: https://github.com/usuario/repositorio)
+        echo.
+        set "NEW_REMOTE="
+        set /p "NEW_REMOTE=URL: "
+        
+        REM Debug: mostrar o que foi lido
+        echo.
+        echo Debug: URL lida = [!NEW_REMOTE!]
+        
+        REM Verificar se a URL foi fornecida (usar delayed expansion)
+        if "!NEW_REMOTE!"=="" (
             echo.
             echo ERRO: URL do repositorio nao fornecida
             echo.
             pause
             exit /b 1
         )
+        
+        REM Remover espaços extras e quebras de linha
+        for /f "delims=" %%a in ("!NEW_REMOTE!") do set "NEW_REMOTE=%%a"
+        
+        REM Adicionar .git no final se não tiver
+        echo !NEW_REMOTE! | findstr /C:".git" >nul
+        if errorlevel 1 (
+            set "NEW_REMOTE=!NEW_REMOTE!.git"
+        )
+        
+        echo.
+        echo Configurando remote: !NEW_REMOTE!
+        
+        REM Remover remote existente se houver
+        git remote remove origin >nul 2>&1
+        
+        REM Configurar remote
+        git remote add origin "!NEW_REMOTE!"
+        if errorlevel 1 (
+            echo.
+            echo ERRO: Falha ao configurar remote
+            echo URL tentada: !NEW_REMOTE!
+            echo.
+            echo Dica: Verifique se a URL esta correta e se o repositorio existe no GitHub
+            echo.
+            pause
+            exit /b 1
+        )
+        echo OK Remote 'origin' configurado: !NEW_REMOTE!
+        set "REMOTE_URL=!NEW_REMOTE!"
     ) else (
         echo.
         echo ERRO: Nao e possivel fazer push sem remote configurado
@@ -155,7 +185,11 @@ echo.
 echo Codigo enviado para o GitHub com sucesso!
 echo.
 echo Repositorio:
-echo    %REMOTE_URL%
+if defined REMOTE_URL (
+    echo    !REMOTE_URL!
+) else (
+    for /f "tokens=*" %%i in ('git remote get-url origin 2^>nul') do echo    %%i
+)
 echo.
 echo Branch:
 echo    %CURRENT_BRANCH%
