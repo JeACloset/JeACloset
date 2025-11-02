@@ -157,7 +157,21 @@ if /i "%PUSH_CONFIRM%"=="S" (
         git push origin %CURRENT_BRANCH%
         if errorlevel 1 (
             echo.
-            echo ERRO: Falha ao fazer push para o GitHub. Verifique suas credenciais e conexao.
+            echo ========================================
+            echo   ERRO: Falha ao fazer push
+            echo ========================================
+            echo.
+            echo Possiveis causas:
+            echo   1. Repositorio nao existe no GitHub
+            echo   2. Repositorio e privado e voce nao esta autenticado
+            echo   3. Credenciais nao configuradas corretamente
+            echo   4. Voce nao tem permissao para acessar o repositorio
+            echo.
+            echo Solucoes:
+            echo   1. Crie o repositorio em: https://github.com/new
+            echo   2. Configure Personal Access Token em: https://github.com/settings/tokens
+            echo   3. Verifique a URL do repositorio: git remote -v
+            echo   4. Veja o guia completo em: SOLUCAO_ERRO_REPOSITORIO_NAO_ENCONTRADO.md
             echo.
             pause
             exit /b 1
