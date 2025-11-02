@@ -87,10 +87,6 @@ if errorlevel 1 (
         set "NEW_REMOTE="
         set /p "NEW_REMOTE=URL: "
         
-        REM Debug: mostrar o que foi lido
-        echo.
-        echo Debug: URL lida = [!NEW_REMOTE!]
-        
         REM Verificar se a URL foi fornecida (usar delayed expansion)
         if "!NEW_REMOTE!"=="" (
             echo.
@@ -129,6 +125,9 @@ if errorlevel 1 (
         )
         echo OK Remote 'origin' configurado: !NEW_REMOTE!
         set "REMOTE_URL=!NEW_REMOTE!"
+        echo.
+        REM Pular para a parte de push, já que o remote foi configurado
+        goto :remote_ready
     ) else (
         echo.
         echo ERRO: Nao e possivel fazer push sem remote configurado
@@ -139,8 +138,10 @@ if errorlevel 1 (
 ) else (
     for /f "tokens=*" %%i in ('git remote get-url origin') do set REMOTE_URL=%%i
     echo OK Remote encontrado: %REMOTE_URL%
+    echo.
 )
-echo.
+
+:remote_ready
 
 REM PASSO 7: Fazer push
 echo PASSO 7: Fazendo push para o GitHub...
