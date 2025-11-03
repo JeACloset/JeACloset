@@ -4,7 +4,7 @@ echo    JEACLOSET - Sistema de Gestao
 echo ========================================
 echo.
 echo Instalando dependencias...
-call npm install --legacy-peer-deps
+call npm install --legacy-peer-deps --include=optional
 echo.
 echo ========================================
 echo    Iniciando servidor de desenvolvimento
