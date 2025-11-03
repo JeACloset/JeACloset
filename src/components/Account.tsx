@@ -5,16 +5,10 @@ import { useAccessTracking } from '../hooks/useAccessTracking';
 import type { User } from '../types';
 import { restoreBackup } from '../utils/backupService';
 
-interface UserCredentials {
-  email: string;
-  password: string;
-  name: string;
-  role: 'admin' | 'user';
-}
-
 // NOTA: Este array NÃO é mais usado - apenas para referência histórica
 // Todas as credenciais agora vêm do Firebase
 // Usuários padrão são criados automaticamente em initializeUsers()
+// interface UserCredentials { email: string; password: string; name: string; role: 'admin' | 'user'; }
 // const USERS: UserCredentials[] = [...];
 
 interface AccountProps {
@@ -50,7 +44,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
   const [selfEditForm, setSelfEditForm] = useState({
     name: '',
     email: '',
-    role: 'user' as 'admin' | 'user',
+    role: currentUser?.role === 'admin' || currentUser?.role === 'user' ? currentUser.role : 'user',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -160,7 +154,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         }
         
         // 🔥 REGISTRAR ACESSO NO FIREBASE (DADOS REAIS)
-        trackAccess(baseUser.role as 'user' | 'admin');
+        trackAccess((baseUser.role === 'admin' || baseUser.role === 'user' || baseUser.role === 'viewer') ? baseUser.role : 'user');
         
         // Atualizar dados de acesso para o admin
         fetchAccessData();
@@ -1143,60 +1137,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
               </div>
 
               <div className="p-6 space-y-4">
-                {/* USUÁRIO: Só pode alterar senha (nome não pode ser alterado) */}
-                {currentUser?.role === 'user' ? (
-                  <>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                      <p className="text-sm text-blue-800">
-                        ℹ️ <strong>Informação:</strong> Para alterar seu nome de login, entre em contato com o administrador.
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Senha Atual <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="password"
-                        value={selfEditForm.currentPassword}
-                        onChange={(e) => setSelfEditForm(prev => ({ ...prev, currentPassword: e.target.value }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        placeholder="Digite sua senha atual"
-                        required
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        ⚠️ Obrigatório para alterar sua senha
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nova Senha <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="password"
-                        value={selfEditForm.newPassword}
-                        onChange={(e) => setSelfEditForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        placeholder="Digite a nova senha"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Confirmar Nova Senha <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="password"
-                        value={selfEditForm.confirmPassword}
-                        onChange={(e) => setSelfEditForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        placeholder="Confirme a nova senha"
-                        required
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* ADMIN: Pode alterar nome e senha */}
+                {/* ADMIN: Pode alterar nome e senha */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Nome</label>
                   <input
@@ -1242,8 +1183,6 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                       />
                     </div>
                     )}
-                  </>
-                )}
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     onClick={() => setShowEditSelf(false)}

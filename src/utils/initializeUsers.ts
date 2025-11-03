@@ -1,4 +1,4 @@
-﻿import { collection, addDoc, getDocs, query, where, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+﻿import { collection, addDoc, getDocs, query, where, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 // Novas credenciais do sistema (sem referências a kayla)
