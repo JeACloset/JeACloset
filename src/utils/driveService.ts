@@ -1,13 +1,5 @@
 import { driveConfig } from '../config/driveConfig';
 
-// Interface para resposta do Google Drive API
-interface DriveFile {
-  id: string;
-  name: string;
-  mimeType: string;
-  parents?: string[];
-}
-
 // Armazenar token de acesso
 let accessToken: string | null = null;
 
@@ -104,13 +96,19 @@ export const authenticateUser = async (): Promise<string | null> => {
         if (event.origin !== window.location.origin) return;
         
         if (event.data.type === 'GOOGLE_DRIVE_TOKEN') {
-          accessToken = event.data.token;
-          const expiresIn = event.data.expiresIn || 3600;
-          saveToken(accessToken, expiresIn);
-          clearInterval(checkInterval);
-          window.removeEventListener('message', messageListener);
-          popup.close();
-          resolve(accessToken);
+          const token = event.data.token;
+          if (token && typeof token === 'string') {
+            accessToken = token;
+            const expiresIn = event.data.expiresIn || 3600;
+            saveToken(token, expiresIn);
+            clearInterval(checkInterval);
+            window.removeEventListener('message', messageListener);
+            popup.close();
+            resolve(token);
+          } else {
+            console.error('❌ Token inválido recebido');
+            resolve(null);
+          }
         }
       };
 

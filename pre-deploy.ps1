@@ -178,15 +178,31 @@ if ($LASTEXITCODE -ne 0) {
         Write-Host "Continuando com o processo..." -ForegroundColor Yellow
     }
     # Verificar se é erro de TypeScript durante build
-    elseif ($buildResult -match "error TS\d+" -or $buildResult -match "TypeScript.*error" -or $buildResult -match "\.tsx?\(\d+,\d+\):.*error") {
+    elseif ($buildResult -match "error TS\d+:" -or $buildResult -match "TypeScript.*error" -or $buildResult -match "\.tsx?\(\d+,\d+\):.*error TS" -or $buildResult -match "Failed during stage 'building site': Build script returned non-zero exit code") {
         Write-Host "" -ForegroundColor Yellow
-        Write-Host "ERRO DE TYPESCRIPT DETECTADO NO BUILD!" -ForegroundColor Red
-        Write-Host "Este erro deve ser corrigido antes do deploy:" -ForegroundColor Yellow
-        Write-Host "✅ Verifique os erros acima" -ForegroundColor Green
-        Write-Host "✅ Execute: npx tsc --noEmit (para ver todos os erros)" -ForegroundColor Green
-        Write-Host "✅ Corrija os erros de TypeScript" -ForegroundColor Green
+        Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Red
+        Write-Host "  ERRO DE TYPESCRIPT DETECTADO NO BUILD!" -ForegroundColor Red
+        Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Red
         Write-Host "" -ForegroundColor Yellow
-        Exit-OnError "Corrija os erros de TypeScript antes de fazer deploy"
+        Write-Host "Foram encontrados erros de TypeScript no código:" -ForegroundColor Yellow
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "ERROS ENCONTRADOS (exemplos):" -ForegroundColor Cyan
+        # Extrair e mostrar apenas os erros principais
+        $tsErrors = $buildResult | Select-String -Pattern "error TS\d+:" | Select-Object -First 5
+        if ($tsErrors) {
+            $tsErrors | ForEach-Object { Write-Host $_.Line -ForegroundColor Red }
+        } else {
+            Write-Host $buildResult -ForegroundColor Red
+        }
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "SOLUÇÕES:" -ForegroundColor Cyan
+        Write-Host "1. Execute: npx tsc --noEmit (para ver TODOS os erros)" -ForegroundColor White
+        Write-Host "2. Corrija todos os erros de TypeScript listados" -ForegroundColor White
+        Write-Host "3. Verifique tipos ausentes, propriedades incorretas, variáveis não usadas" -ForegroundColor White
+        Write-Host "4. Depois de corrigir, execute este script novamente" -ForegroundColor White
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Red
+        Exit-OnError "Erros de TypeScript encontrados - corrija antes de fazer deploy"
     }
     # Verificar se é erro de módulo não encontrado
     elseif ($buildResult -match "Cannot find module" -or $buildResult -match "Module not found" -or $buildResult -match "Failed to resolve import") {

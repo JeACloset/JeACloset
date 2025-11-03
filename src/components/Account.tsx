@@ -15,20 +15,7 @@ interface UserCredentials {
 // NOTA: Este array NÃO é mais usado - apenas para referência histórica
 // Todas as credenciais agora vêm do Firebase
 // Usuários padrão são criados automaticamente em initializeUsers()
-const USERS: UserCredentials[] = [
-  {
-    email: 'admin@JEACLOSET.com',
-    password: 'admin2024',
-    name: 'Administrador',
-    role: 'admin'
-  },
-  {
-    email: 'user@JEACLOSET.com',
-    password: 'user2024',
-    name: 'Usuário',
-    role: 'user'
-  }
-];
+// const USERS: UserCredentials[] = [...];
 
 interface AccountProps {
   onLogin?: (user: User) => void;
@@ -229,7 +216,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       setSelfEditForm({
         name: currentUser.name,
         email: '', // Não usar email no formulário
-        role: currentUser.role, // Mantém role original (admin sempre admin, user sempre user)
+        role: (currentUser.role === 'admin' || currentUser.role === 'user') ? currentUser.role : 'user', // Mantém role original (admin sempre admin, user sempre user)
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
@@ -388,7 +375,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         
         // Fechar modal de edição
         setShowEditSelf(false);
-        setSelfEditForm({ name: '', email: '', role: currentUser?.role || 'admin', currentPassword: '', newPassword: '', confirmPassword: '' });
+        setSelfEditForm({ name: '', email: '', role: (currentUser?.role === 'admin' || currentUser?.role === 'user') ? currentUser.role : 'user', currentPassword: '', newPassword: '', confirmPassword: '' });
       } catch (error) {
         console.error('Erro ao salvar alterações:', error);
         alert('Erro ao salvar alterações. Tente novamente.');

@@ -61,17 +61,25 @@ export const initializeUsers = async () => {
     
     // Verificar se já existem usuários
     const usersSnapshot = await getDocs(collection(db, 'users'));
-    const existingUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const existingUsers = usersSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return { 
+        id: doc.id, 
+        name: data.name as string | undefined,
+        email: data.email as string | undefined,
+        ...data 
+      };
+    });
     
     console.log('Usuários existentes no Firebase:', existingUsers.length, 'usuários');
     
     // Verificar se há usuários com nome "kayla" e remover
-    const kaylaUsers = existingUsers.filter((u: any) => u.name === 'kayla' || u.name?.toLowerCase() === 'kayla');
+    const kaylaUsers = existingUsers.filter((u) => u.name === 'kayla' || u.name?.toLowerCase() === 'kayla');
     if (kaylaUsers.length > 0) {
       console.log(`🗑️ Removendo ${kaylaUsers.length} usuário(s) com nome "kayla"...`);
       for (const kaylaUser of kaylaUsers) {
         await deleteDoc(doc(db, 'users', kaylaUser.id));
-        console.log(`   Removido: ${kaylaUser.name} (${kaylaUser.email})`);
+        console.log(`   Removido: ${kaylaUser.name || 'N/A'} (${kaylaUser.email || 'N/A'})`);
       }
     }
     
@@ -79,7 +87,7 @@ export const initializeUsers = async () => {
     // NÃO atualizar/sobrescrever usuários existentes (respeitar alterações do usuário)
     for (const user of DEFAULT_USERS) {
       // Buscar por email (case-insensitive) ou por nome se email corresponder
-      const existingUser = existingUsers.find((u: any) => {
+      const existingUser = existingUsers.find((u) => {
         const emailMatch = u.email?.toLowerCase() === user.email.toLowerCase();
         const isKayla = u.name === 'kayla' || u.name?.toLowerCase() === 'kayla';
         return emailMatch && !isKayla;

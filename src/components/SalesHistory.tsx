@@ -135,36 +135,6 @@ export default function SalesHistory() {
     }
   };
 
-  const formatDate = (date: Date | any) => {
-    try {
-      // Se for um timestamp do Firebase, converter para Date
-      if (date && typeof date === 'object' && date.toDate) {
-        date = date.toDate();
-      }
-      
-      // Se for uma string, tentar converter para Date
-      if (typeof date === 'string') {
-        date = new Date(date);
-      }
-      
-      // Se não for um objeto Date válido, criar um novo Date
-      if (!(date instanceof Date) || isNaN(date.getTime())) {
-        console.warn('Data inválida recebida:', date);
-        return 'Data inválida';
-      }
-      
-      return new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }).format(date);
-    } catch (error) {
-      console.error('Erro ao formatar data:', error, 'Data recebida:', date);
-      return 'Data inválida';
-    }
-  };
 
   // Formatar apenas data (sem horário)
   const formatDateOnly = (date: Date | any) => {

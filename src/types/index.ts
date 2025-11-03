@@ -104,6 +104,7 @@ export interface Sale {
 export interface SaleFormData {
   customerName: string;
   customerPhone?: string;
+  saleDate: string; // Data da venda no formato YYYY-MM-DD
   discount: number;
   discountType: 'percentual' | 'valor_fixo';
   paymentMethod: PaymentMethod;
@@ -160,6 +161,7 @@ export interface User {
   password?: string;
   role: 'admin' | 'user' | 'viewer';
   createdAt: Date;
+  updatedAt?: Date;
   lastLogin?: Date;
 }
 

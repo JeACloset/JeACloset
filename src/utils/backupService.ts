@@ -39,7 +39,14 @@ const convertTimestamps = (obj: any): any => {
 export const exportAllCollections = async (): Promise<BackupData> => {
   console.log('📦 Iniciando exportação de dados...');
 
-  const collections = {
+  const collections: {
+    users: any[];
+    clothing: any[];
+    sales: any[];
+    fluxo: any[];
+    notes: any[];
+    investments: any[];
+  } = {
     users: [],
     clothing: [],
     sales: [],
@@ -63,7 +70,7 @@ export const exportAllCollections = async (): Promise<BackupData> => {
         });
       });
 
-      collections[collectionName] = data;
+      (collections as any)[collectionName] = data;
       console.log(`✅ ${collectionName}: ${data.length} documentos exportados`);
     } catch (error) {
       console.error(`❌ Erro ao exportar ${collectionName}:`, error);
@@ -155,7 +162,7 @@ export const restoreBackup = async (backupData: BackupData): Promise<{ success: 
     }
     
     const { db } = await import('../config/firebase');
-    const { collection, doc, setDoc, deleteDoc, getDocs } = await import('firebase/firestore');
+    const { doc, setDoc } = await import('firebase/firestore');
     
     const results: any = {
       users: { restored: 0, errors: 0 },
@@ -207,7 +214,8 @@ export const restoreBackup = async (backupData: BackupData): Promise<{ success: 
         console.log(`✅ ${collectionName}: ${results[collectionName].restored} documentos restaurados`);
       } catch (error) {
         console.error(`❌ Erro ao restaurar coleção ${collectionName}:`, error);
-        results[collectionName].errors = data?.length || 0;
+        const collectionData = backupData.collections[collectionName];
+        results[collectionName].errors = (collectionData?.length || 0);
       }
     }
     
